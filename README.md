@@ -24,7 +24,7 @@
         afin de trouver l'onglet " Git " 
         </li>
         <li>
-        Dans le menu deroulant de git vous verrez une option " clone ", dans celui-ci renseigné le depot distant suivant: <a href="https://github.com/Saurelien/OPC_P12_CRM.git">Depot github</a></a>
+        Dans le menu deroulant de git vous verrez une option " clone ", dans celui-ci renseigné le depot distant suivant: <a href="https://github.com/Saurelien/OPC_P12_CRM.git">Depot github</a>
         </li>
         <li>
         Cette action vous créera un nouveau projet du nom du dépot distant.
