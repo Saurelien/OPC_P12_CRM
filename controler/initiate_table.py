@@ -36,3 +36,5 @@ if not Event.table_exists():
 else:
     print("La table", Event._meta.table_name, "existe déjà.")
 
+# TODO "créer un collaborateur a la création des tables
+# drop database pour supprimer la db
