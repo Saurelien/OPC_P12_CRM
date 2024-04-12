@@ -1,0 +1,30 @@
+from peewee import *
+from config.config import db
+from collaborator_app.model import Collaborator
+from client_app.model import Client
+
+
+class BaseModel(Model):
+    class Meta:
+        database = db
+
+
+class Contract(BaseModel):
+    client = ForeignKeyField(Client, backref='contracts')
+    total_amount = IntegerField()
+    remaining_amount = IntegerField()
+    created_date = DateField()
+    updated_at = DateTimeField()
+    is_signed = BooleanField(default=False)
+    manager_assignee = ForeignKeyField(Collaborator, backref='contracts', null=True)
+
+    def mark_as_signed(self):
+        self.is_signed = True
+        self.save()
+
+    def make_payment(self, amount):
+        if amount <= self.remaining_amount:
+            self.remaining_amount -= amount
+            self.save()
+        else:
+            raise ValueError("La somme dépasse le montant à payer.")
