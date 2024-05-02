@@ -1,16 +1,17 @@
 import os
 from collaborator_app.model import Collaborator
+from client_app.model import Client
+from contract_app.model import Contract
+from event_app.model import Event
 import jwt
 from config.config import SECRET_KEY
+from rich.console import Console
+from peewee import DoesNotExist
+
+console = Console()
 
 
 class CollaboratorService:
-    @staticmethod
-    def create_first_collaborator(username, password, first_name, last_name, role):
-        collaborator = Collaborator(username=username, password=password, first_name=first_name, last_name=last_name, role=role)
-        collaborator.set_password(password)
-        collaborator.save()
-        return collaborator
 
     @staticmethod
     def authenticate_collaborator(username, password):
@@ -64,3 +65,51 @@ class AuthenticateService:
             os.remove('config/token.txt')
         except FileNotFoundError:
             pass
+
+
+class CollaboratorValidator:
+    @staticmethod
+    def validate_username(username):
+        print(username)
+        return not Collaborator.username_exists(username)
+
+    @staticmethod
+    def validate_role(role_code):
+        print(role_code)
+        return role_code in ['C', 'G', 'S']
+
+    @staticmethod
+    def validate_collaborator_data(collaborator_data):
+        is_valid = True
+
+        if not CollaboratorValidator.validate_username(collaborator_data.get("username")):
+            console.print("Nom d'utilisateur déjà utilisé. Veuillez en choisir un autre.", style="bold red")
+            is_valid = False
+
+        if not CollaboratorValidator.validate_role(collaborator_data.get("role")):
+            console.print("Code de rôle invalide.", style="bold red")
+            is_valid = False
+        print(is_valid)
+        return is_valid
+
+
+class CollaboratorModificationService:
+    @staticmethod
+    def validate_collaborator_modification_data(collaborator_id):
+        if not CollaboratorModificationService.is_valid_collaborator_id(collaborator_id):
+            raise ValueError("ID Collaborateur invalide")
+
+        # if not CollaboratorModificationService.validate_new_collaborator_info(modified_collaborator):
+        #     raise ValueError("Informations de la modification du collaborateur invalide")
+
+    @staticmethod
+    def is_valid_collaborator_id(collaborator_id):
+        try:
+            Collaborator.get_by_id(collaborator_id)
+            return True
+        except DoesNotExist:
+            console.print("ID du collaborateur inexistant.", style="bold red")
+            return False
+
+
+

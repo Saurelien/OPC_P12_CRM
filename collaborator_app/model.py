@@ -48,3 +48,15 @@ class Collaborator(BaseModel):
     @classmethod
     def username_exists(cls, username):
         return cls.select().where(cls.username == username).exists()
+
+    @staticmethod
+    def validate_username(username):
+        return not Collaborator.username_exists(username)
+
+    @staticmethod
+    def validate_password(password1, password2):
+        return password1 == password2
+
+    @staticmethod
+    def validate_role(role_code):
+        return role_code in ['C', 'G', 'S']

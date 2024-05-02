@@ -8,3 +8,6 @@ DATABASE_PASSWORD = 'r1a2i3n4'
 DATABASE_HOST = 'localhost'
 
 db = PostgresqlDatabase(DATABASE_NAME, user=DATABASE_USER, password=DATABASE_PASSWORD, host=DATABASE_HOST)
+
+# TODO "Trouver un moyen plus sécurisé de generer un secret_key
+#  stocké en dehors du projet et request la secre_key via une sorte de requête"
