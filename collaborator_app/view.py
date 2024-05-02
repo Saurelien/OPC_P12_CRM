@@ -69,26 +69,31 @@ class MenuView:
                       title_justify="center",
                       title_style="bold magenta")
         table.add_column("choix", style="bold cyan", justify="center")
-        table.add_column("description", style="bold cyan", justify="left")
+        table.add_column("description", style="bold cyan", justify="center", no_wrap=True)
+        table.add_column("helper", style="bold cyan", justify="left", no_wrap=True)
         rows = [
-            ("1", "Créer un nouveau collaborateur"),
-            ("2", "Rechercher un client"),
-            ("3", "Rechercher un contrat"),
-            ("4", "Rechercher un évènement"),
-            ("5", "Créer ou modifier un contrat"),
-            ("6", "Afficher tous les évènements"),
-            ("7", "Assigner un support a un évènement"),
-            ("8", "Modifier un collaborateur"),
-            ("9", "Afficher les collaborateurs"),
-            ("10", "Supprimer un collaborateur"),
-            ("Q", "Se déconnecter"),
+            ("1", "Créer un nouveau collaborateur", "Permet la création d'un nouveau collaborateur"),
+            ("2", "Rechercher un client", "Affiche les clients existants"),
+            ("3", "Rechercher un contrat", "Affiche tout les contrats existant"),
+            ("4", "Rechercher un évènement", "Affiche les event existant"),
+            ("5", "Créer ou modifier un contrat",
+             "Affiche un menu pour la création d'un contrat ou la modification d'un contrat"),
+            ("6", "Afficher tous les évènements",
+             "reflexion a garder cette option ou a changer la nature du fonctionne de la recherche en recherche spécidifque sur l'id d'un contrat"),
+            ("7", "Assigner un support a un évènement",
+             "Assigner un collaborateur du département support à un évènnement"),
+            ("8", "Modifier un collaborateur", ""),
+            ("9", "Afficher les collaborateurs", "Affiche les collaborateur existants"),
+            ("10", "Supprimer un collaborateur", "Permet la suppression d'un collaborateur"),
+            ("Q", "Se déconnecter", "Deconnecte l'utilisateur en toute sécurité du programme"),
         ]
-        for choice, description in rows:
-            table.add_row(choice, description)
+        for choice, description, helper in rows:
+            table.add_row(choice, description, helper)
         console.print(table)
 
     @staticmethod
     def display_commercial_menu():
+        console.bell()
         table = Table(show_header=True, header_style="bold magenta", border_style="bold yellow")
         table.add_column("== Menu Commercial ==", style="bold cyan", justify="center")
         table.add_column("== Description ==", style="bold cyan", justify="center")
@@ -106,6 +111,7 @@ class MenuView:
 
     @staticmethod
     def display_support_menu():
+        console.bell()
         table = Table(show_header=True, header_style="bold magenta", border_style="bold yellow")
         table.add_column("== Menu Support ==", style="bold cyan", justify="center")
         table.add_column("== Description ==", style="bold cyan", justify="center")

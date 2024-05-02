@@ -112,4 +112,12 @@ class CollaboratorModificationService:
             return False
 
 
+def get_model_fields(model):
+    """
+    Récupère les champs d'un modèle et retourne une liste de tuples (nom du champ, type du champ).
+    """
+    fields = []
+    for field_name, field in model._meta.fields.items():
+        fields.append((field_name, type(field).__name__))
+    return fields
 

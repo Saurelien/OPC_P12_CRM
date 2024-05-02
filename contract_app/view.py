@@ -25,9 +25,9 @@ class ContractView:
         for contract in contracts:
             created_date = contract.created_date.strftime("%d-%m-%Y")
             updated_at = contract.updated_at.strftime("%d-%m-%Y")
-            client = (f"{contract.client.first_name}"
+            client = (f"{contract.client.first_name} "
                       f"{contract.client.last_name}")
-            manager = (f"{contract.manager_assignee.first_name}"
+            manager = (f"{contract.manager_assignee.first_name} "
                        f"{contract.manager_assignee.last_name}")
             table.add_row(
                 str(contract.id),

@@ -60,7 +60,6 @@ def create_client():
             "first_name": "Gerard",
             "last_name": "Gniome",
             "email": "Gerard.Gniome@example.com",
-            "phone_country_code": "+33",
             "phone_number": "123456789",
             "created_at": datetime.datetime.now(),
             "updated_at": datetime.datetime.now(),
@@ -71,13 +70,11 @@ def create_client():
             first_name=predefined_data["first_name"],
             last_name=predefined_data["last_name"],
             email=predefined_data["email"],
-            phone_country_code=predefined_data["phone_country_code"],
             phone_number=predefined_data["phone_number"],
             created_at=predefined_data["created_at"],
             updated_at=predefined_data["updated_at"],
             commercial_assignee=predefined_data["commercial_assignee"]
         )
-        client.validate_email()
         client.save()
 
         try:

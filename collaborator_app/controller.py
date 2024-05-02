@@ -1,5 +1,8 @@
+from client_app.view import ClientView
 from services.utils import CollaboratorService, AuthenticateService, CollaboratorModificationService
 from collaborator_app.model import Collaborator, PH
+from client_app.model import Client
+from event_app.model import Event
 from collaborator_app.view import MenuView, display_collaborator_table
 from client_app.controller import MainClientController
 from contract_app.controller import MainContractController
@@ -51,11 +54,7 @@ class MainController:
         if role == Collaborator.GESTION:
             MainController.gestion_control_menu()
         elif role == Collaborator.COMMERCIAL:
-            MenuView.display_commercial_menu()
-            choice = MenuView.get_choice()
-            if choice.upper() == "Q":
-                AuthenticateService.delete_token()
-                MainController.run()
+            MainController.commercial_control_menu()
         elif role == Collaborator.SUPPORT:
             MenuView.display_support_menu()
             choice = MenuView.get_choice()
@@ -75,6 +74,9 @@ class MainController:
                 MainClientController.display_existing_client()
             elif choice == "3":
                 MainContractController.display_existing_contract()
+            elif choice == "5":
+                # cls qui affiche un sous menu avec un choix de création et un choix de modification d'un contrat
+                pass
             elif choice == "8":
                 MainController.display_existing_collaborators()
                 cls.modify_collaborator()
@@ -83,6 +85,17 @@ class MainController:
             elif choice == "10":
                 MainController.display_existing_collaborators()
                 cls.delete_collaborator()
+            elif choice.upper() == "Q":
+                AuthenticateService.delete_token()
+                MainController.run()
+
+    @classmethod
+    def commercial_control_menu(cls):
+        while True:
+            MenuView.display_commercial_menu()
+            choice = ClientView.get_choice()
+            if choice == "1":
+                MainClientController.create_client()
             elif choice.upper() == "Q":
                 AuthenticateService.delete_token()
                 MainController.run()
