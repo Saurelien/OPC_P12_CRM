@@ -24,3 +24,5 @@ class Event(BaseModel):
 
     def __str__(self):
         return f"Event ID: Location: {self.postal_address}"
+
+

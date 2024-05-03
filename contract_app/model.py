@@ -14,10 +14,10 @@ class Contract(BaseModel):
     client = ForeignKeyField(Client, backref='contracts', on_delete="CASCADE")
     total_amount = IntegerField()
     remaining_amount = IntegerField()
-    created_date = DateField()
+    created_date = DateTimeField()
     updated_at = DateTimeField()
     is_signed = BooleanField(default=False)
-    manager_assignee = ForeignKeyField(Collaborator, backref='contracts', null=True, on_delete="CASCADE")
+    commercial_assignee = ForeignKeyField(Collaborator, backref='contracts', null=True, on_delete="CASCADE")
 
     def mark_as_signed(self):
         self.is_signed = True

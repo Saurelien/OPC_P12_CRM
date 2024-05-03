@@ -93,7 +93,7 @@ def create_contract():
             "created_date": datetime.date.today(),
             "updated_at": datetime.datetime.now(),
             "is_signed": False,
-            "manager_assignee": Collaborator.get_or_create(username="commercial_test")[0]
+            "commercial_assignee": Collaborator.get_or_create(username="commercial_test")[0]
         }
         contract = Contract(
             client=predefined_data["client"],
@@ -102,7 +102,7 @@ def create_contract():
             created_date=predefined_data["created_date"],
             updated_at=predefined_data["updated_at"],
             is_signed=predefined_data["is_signed"],
-            manager_assignee=predefined_data["manager_assignee"]
+            commercial_assignee=predefined_data["commercial_assignee"]
         )
         contract.save()
         try:

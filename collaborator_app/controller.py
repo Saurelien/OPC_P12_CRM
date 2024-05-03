@@ -75,8 +75,7 @@ class MainController:
             elif choice == "3":
                 MainContractController.display_existing_contract()
             elif choice == "5":
-                # cls qui affiche un sous menu avec un choix de création et un choix de modification d'un contrat
-                pass
+                MainContractController.create_contract()
             elif choice == "8":
                 MainController.display_existing_collaborators()
                 cls.modify_collaborator()

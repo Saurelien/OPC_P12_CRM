@@ -32,7 +32,9 @@ class ClientView:
             created_at = client.created_at.strftime("%d-%m-%Y")
             updated_at = client.updated_at.strftime("%d-%m-%Y")
             commercial_assignee = (f"Nom du commercial: {client.commercial_assignee.username} | "
-                                   f"Prenom du commercial: {client.commercial_assignee.last_name}")
+                                   f"Prenom du commercial: {client.commercial_assignee.last_name} | "
+                                   f"ID du collaborateur: {client.commercial_assignee.id} | "
+                                   f"Role du collaborateur: {client.commercial_assignee.role}")
             table.add_row(
                 str(client.id),
                 client.first_name,
@@ -47,19 +49,19 @@ class ClientView:
 
     @staticmethod
     def display_create_client():
-        collaborator_data = {"first_name": Prompt.ask("[bold green]"
-                                                      "Saisissez le prénom du collaborateur"
-                                                      "[/bold green]"),
-                             "last_name": Prompt.ask("[bold green]"
-                                                     "Saisissez le nom du collaborateur: "
-                                                     "[/bold green]"),
-                             "email": Prompt.ask("[bold green]"
-                                                 "Veuillez saisir l'email du client"
-                                                 "[/bold green]"),
-                             "phone_number": Prompt.ask("[bold green]"
-                                                        "Veuillez saisir le numéro de téléphone du client"
-                                                        "[/bold green]")}
-        return collaborator_data
+        client_data = {"first_name": Prompt.ask("[bold green]"
+                                                "Saisissez le prénom du client"
+                                                "[/bold green]"),
+                       "last_name": Prompt.ask("[bold green]"
+                                               "Saisissez le nom du client: "
+                                               "[/bold green]"),
+                       "email": Prompt.ask("[bold green]"
+                                           "Veuillez saisir l'email du client"
+                                           "[/bold green]"),
+                       "phone_number": Prompt.ask("[bold green]"
+                                                  "Veuillez saisir le numéro de téléphone du client"
+                                                  "[/bold green]")}
+        return client_data
 
 
 def display_client_table(client_data):

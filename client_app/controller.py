@@ -1,7 +1,8 @@
 import datetime
+import re
 from client_app.model import Client
-from collaborator_app.model import Collaborator
 from client_app.view import ClientView, display_client_table
+from collaborator_app.model import Collaborator
 from services.utils import AuthenticateService, CollaboratorService
 
 
@@ -30,26 +31,19 @@ class MainClientController:
             user_id = AuthenticateService.decode_token(token)
             commercial_collaborator = CollaboratorService.get_collaborator_by_id(user_id)
 
-            if commercial_collaborator:
-                # Créer une instance de Client en utilisant les données saisies par l'utilisateur
+            if commercial_collaborator.role == Collaborator.COMMERCIAL:
+                email_value = client_data["email"]
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", email_value):
+                    raise ValueError("Format d'email incorrect.")
+                email = email_value
                 new_client = Client(
                     first_name=client_data["first_name"],
                     last_name=client_data["last_name"],
-                    email=client_data["email"],
-                    phone_number=client_data["phone_number"],  # Assurez-vous que le numéro de téléphone est fourni
+                    email=email,
+                    phone_number=client_data["phone_number"],
                     created_at=datetime.datetime.now(),
                     updated_at=datetime.datetime.now(),
-                    commercial_assignee=commercial_collaborator  # Utilisez l'objet Collaborator lui-même
+                    commercial_assignee=commercial_collaborator
                 )
-
-                try:
-                    # Enregistrer le nouveau client dans la base de données
-                    new_client.save()
-                    # Afficher les détails du client dans un tableau
-                    display_client_table(client_data)
-                except Exception as e:
-                    print(f"Une erreur s'est produite lors de la création du client : {e}")
-            else:
-                print("Le collaborateur n'a pas été trouvé.")
-        else:
-            print("Token invalide.")
+                new_client.save()
+                display_client_table(client_data)
