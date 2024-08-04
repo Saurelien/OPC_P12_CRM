@@ -1,7 +1,6 @@
 from rich.console import Console
 from rich.table import Table
 from rich.prompt import Prompt
-import getpass
 
 console = Console()
 
@@ -55,8 +54,8 @@ class MenuView:
     @staticmethod
     def display_login_menu():
         console.print("== Connexion ==", style="bold cyan")
-        username = input("Nom d'utilisateur : ")
-        password = getpass.getpass("Mot de passe : ")
+        username = Prompt.ask("[bold green]Nom d'utilisateur[/bold green]")
+        password = Prompt.ask("[bold green]Mot de passe[/bold green]", password=True)
         return username, password
 
     @staticmethod
@@ -72,20 +71,19 @@ class MenuView:
         table.add_column("description", style="bold cyan", justify="center", no_wrap=True)
         table.add_column("helper", style="bold cyan", justify="left", no_wrap=True)
         rows = [
-            ("1", "Créer un nouveau collaborateur", "Permet la création d'un nouveau collaborateur"),
-            ("2", "Rechercher un client", "Affiche les clients existants"),
-            ("3", "Rechercher un contrat", "Affiche tout les contrats existant"),
-            ("4", "Rechercher un évènement", "Affiche les event existant"),
-            ("5", "Créer ou modifier un contrat",
-             "Affiche un menu pour la création d'un contrat ou la modification d'un contrat"),
-            ("6", "Afficher tous les évènements",
-             "reflexion a garder cette option ou a changer la nature du fonctionne de la recherche en recherche spécidifque sur l'id d'un contrat"),
-            ("7", "Assigner un support a un évènement",
+            ("1.", "Créer un nouveau collaborateur", "Permet la création d'un nouveau collaborateur"),
+            ("2.", "Rechercher un client", "Affiche les clients existants"),
+            ("3.", "Rechercher un contrat", "Affiche tout les contrats existant"),
+            ("4.", "Rechercher un évènement", "Affiche les event existant"),
+            ("5.", "Créer un contrat",
+             "Affiche un menu pour la création d'un contrat"),
+            ("6.", "Modification d'un contrat", "Modification d'un contrat"),
+            ("7.", "Assigner un support a un évènement",
              "Assigner un collaborateur du département support à un évènnement"),
-            ("8", "Modifier un collaborateur", ""),
-            ("9", "Afficher les collaborateurs", "Affiche les collaborateur existants"),
-            ("10", "Supprimer un collaborateur", "Permet la suppression d'un collaborateur"),
-            ("Q", "Se déconnecter", "Deconnecte l'utilisateur en toute sécurité du programme"),
+            ("8.", "Modifier un collaborateur", ""),
+            ("9.", "Afficher les collaborateurs", "Affiche les collaborateur existants"),
+            ("10.", "Supprimer un collaborateur", "Permet la suppression d'un collaborateur"),
+            ("Q.", "Se déconnecter", "Deconnecte l'utilisateur en toute sécurité du programme"),
         ]
         for choice, description, helper in rows:
             table.add_row(choice, description, helper)
@@ -94,32 +92,48 @@ class MenuView:
     @staticmethod
     def display_commercial_menu():
         console.bell()
-        table = Table(show_header=True, header_style="bold magenta", border_style="bold yellow")
-        table.add_column("== Menu Commercial ==", style="bold cyan", justify="center")
-        table.add_column("== Description ==", style="bold cyan", justify="center")
-        table.add_row("1. Créer une fiche client")
-        table.add_row("2. Rechercher un client")
-        table.add_row("3. Rechercher un contrat")
-        table.add_row("4. Rechercher un évènement")
-        table.add_row("5. Mettre à jour un client")
-        table.add_row("6. Mettre à jour un contrat")
-        table.add_row("7. Afficher les contrats non signé/impayé")
-        table.add_row("8. Créer un évènement pour un client ayant souscrit a un contrat")
-        table.add_row("9" "Afficher les collaborateurs", "affiche les collaborateurs")
-        table.add_row("Q. Se déconnecter")
+        table = Table(title="== Menu Commercial ==", show_header=True,
+                      header_style="bold magenta",
+                      border_style="bold yellow",
+                      title_style="bold magenta",
+                      title_justify="center")
+        table.add_column("Choix Commercial", style="bold cyan", justify="center")
+        table.add_column("Description", style="bold cyan", justify="left")
+        table.add_column("HELPER", style="bold cyan", justify="left")
+        table.add_row("1.", "Créer une fiche client", "Permet de créer une fiche avec les informations du client")
+        table.add_row("2.", "Rechercher un client", "Affiche les clients existants")
+        table.add_row("3.", "Rechercher un contrat", "Affiche tout les contrats existant")
+        table.add_row("4.", "Rechercher un évènement", "Affiche les event existant")
+        table.add_row("5.", "Mettre à jour un client", "Permet la modifications des informations d'un client")
+        table.add_row("6.", "Mettre à jour un contrat", "Permet la midifcation des informations d'un contrat")
+        table.add_row("7.", "Afficher les contrats non signé/impayé", "** WIP **")
+        table.add_row("8.", "Créer un évènement pour un client ayant souscrit a un contrat", "Affiche un tableau"
+                                                                                              "contenant les contrats "
+                                                                                              "que"
+                                                                                              "vos clients"
+                                                                                              "ont signé")
+        table.add_row("9.", "Afficher les collaborateurs", "Affiche les collaborateurs")
+        table.add_row("Q.", "Se déconnecter", "Quitte votre session")
         console.print(table)
 
     @staticmethod
     def display_support_menu():
         console.bell()
-        table = Table(show_header=True, header_style="bold magenta", border_style="bold yellow")
-        table.add_column("== Menu Support ==", style="bold cyan", justify="center")
-        table.add_column("== Description ==", style="bold cyan", justify="center")
-        table.add_row("1. Rechercher un client", "Affiche les clients")
-        table.add_row("2. Rechercher un contrat")
-        table.add_row("3. Rechercher un évènement")
-        table.add_row("4", "Afficher les collaborateurs"),
-        table.add_row("Q. Se déconnecter")
+        table = Table(title="== Menu Support ==", show_header=True,
+                      header_style="bold magenta",
+                      border_style="bold yellow",
+                      title_style="bold magenta",
+                      title_justify="center")
+        table.add_column("Choix Support", style="bold cyan", justify="center")
+        table.add_column("Description", style="bold cyan", justify="left")
+        table.add_column("HELPER", style="bold cyan", justify="left")
+        table.add_row("1.", "Rechercher un client", "Affiche les clients existants")
+        table.add_row("2.", "Rechercher un contrat", "Affiche tout les contrats existant")
+        table.add_row("3.", "Rechercher un évènement", "Affiche les event existant")
+        table.add_row("4.", "Afficher les collaborateurs", "Affiche les collaborateurs"),
+        table.add_row("5.", "Afficher vos évènements", "Affiche vos évènements auxquels vous êtes assigné"),
+        table.add_row("6.", "Modifier vos évènements", "Permet la modification d'un event auquel vous êtes assigné"),
+        table.add_row("Q.", "Se déconnecter", "Quitte votre session")
         console.print(table)
 
     @staticmethod
@@ -207,6 +221,11 @@ class MenuView:
         console.print(f"[bold red]"
                       f"La suppression du collaborateur {username} a échoué ou a été annulée."
                       f"[/bold red]")
+
+    @staticmethod
+    def display_insufficient_permissions():
+        print("Vous n'avez pas les permissions nécessaires pour supprimer un collaborateur."
+              " Seul un gestionnaire peut effectuer cette action.")
 
 
 def display_collaborator_table(collaborator_data):

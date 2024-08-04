@@ -1,14 +1,71 @@
 import os
 from collaborator_app.model import Collaborator
-from client_app.model import Client
-from contract_app.model import Contract
-from event_app.model import Event
 import jwt
 from config.config import SECRET_KEY
 from rich.console import Console
-from peewee import DoesNotExist
+from peewee import *
+
 
 console = Console()
+
+
+class Session:
+    user = None
+
+    @classmethod
+    def authenticate(cls, username, password):
+        user = CollaboratorService.authenticate_collaborator(username, password)
+        if user:
+            cls.login(user)
+            return True
+        return False
+
+    @classmethod
+    def login(cls, user):
+        cls.user = user
+        token = AuthenticateService.generate_token(user.id)
+        AuthenticateService.store_token(token)
+
+    @classmethod
+    def logout(cls):
+        cls.user = None
+        AuthenticateService.delete_token()
+
+    @classmethod
+    def load_session(cls):
+        token = AuthenticateService.load_token()
+        if token:
+            user_id = AuthenticateService.decode_token(token)
+            user = CollaboratorService.get_collaborator_by_id(user_id)
+            if user:
+                cls.user = user
+                return True
+        return False
+
+    @classmethod
+    def is_authenticated(cls):
+        return cls.user is not None
+
+    @classmethod
+    def get_current_user(cls):
+        if not cls.user:
+            cls.load_session()
+        return cls.user
+
+    @classmethod
+    def is_commercial(cls):
+        user = cls.get_current_user()
+        return user is not None and user.role == Collaborator.COMMERCIAL
+
+    @classmethod
+    def is_gestion(cls):
+        user = cls.get_current_user()
+        return user is not None and user.role == Collaborator.GESTION
+
+    @classmethod
+    def is_support(cls):
+        user = cls.get_current_user()
+        return user is not None and user.role == Collaborator.SUPPORT
 
 
 class CollaboratorService:

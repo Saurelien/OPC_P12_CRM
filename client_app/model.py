@@ -1,11 +1,6 @@
 from peewee import *
-from config.config import db
 from collaborator_app.model import Collaborator
-
-
-class BaseModel(Model):
-    class Meta:
-        database = db
+from services.basemodel import BaseModel
 
 
 class Client(BaseModel):
@@ -14,15 +9,16 @@ class Client(BaseModel):
     last_name = CharField(max_length=50)
     email = CharField()
     phone_number = CharField()
-    created_at = DateTimeField()
-    updated_at = DateTimeField()
     commercial_assignee = ForeignKeyField(Collaborator, backref='clients', on_delete="CASCADE")
 
     def save(self, *args, **kwargs):
         return super().save(*args, **kwargs)
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         return self.email
 
     def get_full_phone_number(self):
-        return f"{self.phone_country_code}{self.phone_number}"
+        return f"{self.phone_number}"

@@ -48,28 +48,100 @@ class ClientView:
         console.print(table, justify="left")
 
     @staticmethod
-    def display_create_client():
-        client_data = {"first_name": Prompt.ask("[bold green]"
-                                                "Saisissez le prénom du client"
-                                                "[/bold green]"),
-                       "last_name": Prompt.ask("[bold green]"
-                                               "Saisissez le nom du client: "
-                                               "[/bold green]"),
-                       "email": Prompt.ask("[bold green]"
-                                           "Veuillez saisir l'email du client"
-                                           "[/bold green]"),
-                       "phone_number": Prompt.ask("[bold green]"
-                                                  "Veuillez saisir le numéro de téléphone du client"
-                                                  "[/bold green]")}
+    def display_create_client_basic_info():
+        client_data = {
+            "first_name": Prompt.ask("[bold green]Saisissez le prénom du client[/bold green]"),
+            "last_name": Prompt.ask("[bold green]Saisissez le nom du client[/bold green]")
+        }
         return client_data
 
+    @staticmethod
+    def prompt_email():
+        return Prompt.ask("[bold green]Veuillez saisir l'email du client[/bold green]")
 
-def display_client_table(client_data):
-    table = Table(title="Recap de la création du client", title_style="bold magenta", border_style="bold yellow")
-    table.add_column("Champs", style="bold blue", header_style="bold cyan")
-    table.add_column("Valeur", style="bold blue", header_style="bold cyan")
+    @staticmethod
+    def prompt_phone_number():
+        return Prompt.ask("[bold green]Veuillez saisir le numéro de téléphone du client[/bold green]")
 
-    for field, value in client_data.items():
-        table.add_row(str(field), str(value), style="bold cyan")
+    @staticmethod
+    def display_client_table(client):
+        table = Table(title="Recap de la création du client", title_style="bold magenta", border_style="bold yellow")
+        table.add_column("Champs", style="bold blue", header_style="bold cyan")
+        table.add_column("Valeur", style="bold blue", header_style="bold cyan")
 
-    console.print(table)
+        fields = ["first_name", "last_name", "email", "phone_number", "commercial_assignee"]
+        for field in fields:
+            value = getattr(client, field)
+            table.add_row(str(field), str(value), style="bold cyan")
+
+        console.print(table)
+
+    @staticmethod
+    def display_error(error_code):
+        messages = {
+            "INVALID_EMAIL_FORMAT": "Format d'email incorrect. Veuillez saisir un email valide.",
+            "EMAIL_ALREADY_EXISTS": "Cet email est déjà utilisé. Veuillez en saisir un autre.",
+            "NO_CLIENT_FOUND": "Aucun client trouvé pour ce commercial.",
+            "NO_CLIENT_SELECTED": "Aucun client sélectionné.",
+            "CLIENT_NOT_EXIST": "Le client spécifié n'existe pas.",
+        }
+        console.print(messages.get(error_code, "Erreur inconnue."), style="bold red")
+
+    @staticmethod
+    def display_success(success_code):
+        messages = {
+            "SUCCESS_CREATE": "Client mis à jour avec succès.",
+        }
+        console.print(messages.get(success_code, 'succès'), style="bold green")
+
+    @staticmethod
+    def prompt_modified_client_data():
+        client_data = {
+            "first_name": Prompt.ask("[bold green]Nouveau prénom du client[/bold green]"),
+            "last_name": Prompt.ask("[bold green]Nouveau nom du client[/bold green]"),
+            "email": Prompt.ask("[bold green]Nouvel email du client (laissez vide pour ne pas changer)[/bold green]"),
+            "phone_number": Prompt.ask("[bold green]Nouveau numéro de téléphone du client[/bold green]")
+        }
+        return client_data
+
+    @staticmethod
+    def display_clients_table(clients):
+        table = Table(title="Liste de vos clients", title_style="bold magenta", border_style="bold yellow")
+        table.add_column("ID", style="bold blue", header_style="bold cyan")
+        table.add_column("Prénom", style="bold blue", header_style="bold cyan")
+        table.add_column("Nom", style="bold blue", header_style="bold cyan")
+        table.add_column("Email", style="bold blue", header_style="bold cyan")
+        table.add_column("Numéro de téléphone", style="bold blue", header_style="bold cyan")
+
+        for client in clients:
+            table.add_row(str(client.id), client.first_name, client.last_name, client.email, client.phone_number)
+
+        console.print(table)
+
+    @staticmethod
+    def prompt_client_id(clients):
+        valid_ids = [str(client.id) for client in clients]
+        return Prompt.ask("[bold green]Veuillez saisir l'ID du client à modifier[/bold green]",
+                          choices=valid_ids)
+
+    @staticmethod
+    def display_client_details(client):
+        table = Table(title="Détails du client", title_style="bold magenta", border_style="bold yellow")
+        table.add_column("Champ", style="bold blue", header_style="bold cyan")
+        table.add_column("Valeur", style="bold blue", header_style="bold cyan")
+
+        table.add_row("ID", str(client.id))
+        table.add_row("Prénom", client.first_name)
+        table.add_row("Nom", client.last_name)
+        table.add_row("Email", client.email)
+        table.add_row("Numéro de téléphone", client.phone_number)
+        table.add_row("Créé le", str(client.created_at))
+        table.add_row("Modifié le", str(client.updated_at))
+        table.add_row("Commercial assigné", client.commercial_assignee.username)
+
+        console.print(table)
+
+    @staticmethod
+    def prompt_modified_client_email():
+        email = Prompt.ask("[bold green]Nouvel email du client (laissez vide pour ne pas changer)[/bold green]")
+        return email

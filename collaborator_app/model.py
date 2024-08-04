@@ -1,13 +1,9 @@
 from peewee import *
-from config.config import db, SECRET_KEY
+from config.config import SECRET_KEY
 import argon2
+from services.basemodel import BaseModel
 
 PH = argon2.PasswordHasher()
-
-
-class BaseModel(Model):
-    class Meta:
-        database = db
 
 
 class Collaborator(BaseModel):

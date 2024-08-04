@@ -6,8 +6,11 @@ DATABASE_NAME = 'epic_event_crm_final'
 DATABASE_USER = 'user_collaborator'
 DATABASE_PASSWORD = 'r1a2i3n4'
 DATABASE_HOST = 'localhost'
+ADMIN_USER = 'postgres'
+ENVIRONMENT = "LOCAL"
 
-db = PostgresqlDatabase(DATABASE_NAME, user=DATABASE_USER, password=DATABASE_PASSWORD, host=DATABASE_HOST)
+db = PostgresqlDatabase(DATABASE_NAME,
+                        user=DATABASE_USER,
+                        password=DATABASE_PASSWORD,
+                        host=DATABASE_HOST)
 
-# TODO "Trouver un moyen plus sécurisé de generer un secret_key
-#  stocké en dehors du projet et request la secre_key via une sorte de requête"
