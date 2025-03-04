@@ -84,15 +84,26 @@ class ClientView:
             "NO_CLIENT_FOUND": "Aucun client trouvé pour ce commercial.",
             "NO_CLIENT_SELECTED": "Aucun client sélectionné.",
             "CLIENT_NOT_EXIST": "Le client spécifié n'existe pas.",
+            "CLIENT_HAS_SIGNED_CONTRACT": "Le client que vous souhaité supprimer à un ou plusieurs contrats signés en cours"
         }
         console.print(messages.get(error_code, "Erreur inconnue."), style="bold red")
 
     @staticmethod
     def display_success(success_code):
         messages = {
-            "SUCCESS_CREATE": "Client mis à jour avec succès.",
+            "SUCCESS_CREATE": "Client créé avec succès.",
+            "SUCCESS_MODIFY": "Client mis à jour avec succès.",
+            "SUCCESS_DELETE": "Client supprimé avec succès.",
         }
-        console.print(messages.get(success_code, 'succès'), style="bold green")
+
+        message = messages.get(success_code, "Succès")
+
+        if success_code == "SUCCESS_CREATE":
+            console.print(f"✅[bold green] {message}[/bold green]")
+        elif success_code == "SUCCESS_MODIFY":
+            console.print(f"🔄[bold blue] {message}[/bold blue]")
+        elif success_code == "SUCCESS_DELETE":
+            console.print(f"✅[bold green] {message}[/bold green]")
 
     @staticmethod
     def prompt_modified_client_data():
@@ -118,11 +129,28 @@ class ClientView:
 
         console.print(table)
 
+
     @staticmethod
     def prompt_client_id(clients):
         valid_ids = [str(client.id) for client in clients]
-        return Prompt.ask("[bold green]Veuillez saisir l'ID du client à modifier[/bold green]",
-                          choices=valid_ids)
+
+        while True:
+            client_id = Prompt.ask(
+                "[bold green]Veuillez saisir l'ID du client à modifier (ou appuyez sur Entrée pour annuler)[/bold green]"
+            ).strip()
+
+            if client_id in valid_ids:
+                return int(client_id)  # ✅ Retourne l'ID valide
+
+            console.print("[bold red]ID invalide ou absent.[/bold red]")
+
+            confirmation = Prompt.ask(
+                "[bold yellow]Voulez-vous annuler l'opération ? (O/N)[/bold yellow]"
+            ).strip().lower()
+
+            if confirmation == "o":
+                console.print("[bold cyan]Opération annulée.[/bold cyan]")
+                return None
 
     @staticmethod
     def display_client_details(client):
@@ -145,3 +173,9 @@ class ClientView:
     def prompt_modified_client_email():
         email = Prompt.ask("[bold green]Nouvel email du client (laissez vide pour ne pas changer)[/bold green]")
         return email
+
+    @staticmethod
+    def confirm_action(message):
+        """Affiche un message de confirmation et retourne la réponse de l'utilisateur"""
+        console.print(f"[bold yellow]{message}[/bold yellow]")
+        return input("> ").strip().lower()

@@ -1,5 +1,6 @@
 from rich.console import Console
 from rich.table import Table
+from rich.align import Align
 from rich.prompt import Prompt
 
 console = Console()
@@ -81,7 +82,7 @@ class MenuView:
             ("7.", "Assigner un support a un évènement",
              "Assigner un collaborateur du département support à un évènnement"),
             ("8.", "Modifier un collaborateur", ""),
-            ("9.", "Afficher les collaborateurs", "Affiche les collaborateur existants"),
+            ("9.", "Afficher les collaborateurs", "Affiche les collaborateurs existants"),
             ("10.", "Supprimer un collaborateur", "Permet la suppression d'un collaborateur"),
             ("Q.", "Se déconnecter", "Deconnecte l'utilisateur en toute sécurité du programme"),
         ]
@@ -97,22 +98,24 @@ class MenuView:
                       border_style="bold yellow",
                       title_style="bold magenta",
                       title_justify="center")
-        table.add_column("Choix Commercial", style="bold cyan", justify="center")
-        table.add_column("Description", style="bold cyan", justify="left")
-        table.add_column("HELPER", style="bold cyan", justify="left")
+        table.add_column(Align.center("Choix Commercial"), style="bold cyan", justify="center")
+        table.add_column(Align.center("Description"), style="bold cyan", justify="left")
+        table.add_column(Align.center("HELPER"), style="bold cyan", justify="left")
         table.add_row("1.", "Créer une fiche client", "Permet de créer une fiche avec les informations du client")
-        table.add_row("2.", "Rechercher un client", "Affiche les clients existants")
-        table.add_row("3.", "Rechercher un contrat", "Affiche tout les contrats existant")
+        table.add_row("2.", "Rechercher un client", "Affiche tous les clients existants")
+        table.add_row("3.", "Rechercher un contrat", "Affiche tous les contrats existant")
         table.add_row("4.", "Rechercher un évènement", "Affiche les event existant")
         table.add_row("5.", "Mettre à jour un client", "Permet la modifications des informations d'un client")
-        table.add_row("6.", "Mettre à jour un contrat", "Permet la midifcation des informations d'un contrat")
-        table.add_row("7.", "Afficher les contrats non signé/impayé", "** WIP **")
+        table.add_row("6.", "Mettre à jour un contrat", "Permet la modifcation des informations d'un contrat")
+        table.add_row("7.", "Afficher les contrats non signé/impayé", "Affiche les contrats ayant un impayé et ou non "
+                                                                      "signé")
         table.add_row("8.", "Créer un évènement pour un client ayant souscrit a un contrat", "Affiche un tableau"
-                                                                                              "contenant les contrats "
-                                                                                              "que"
-                                                                                              "vos clients"
-                                                                                              "ont signé")
-        table.add_row("9.", "Afficher les collaborateurs", "Affiche les collaborateurs")
+                                                                                             "contenant les contrats "
+                                                                                             "que"
+                                                                                             "vos clients"
+                                                                                             "ont signé")
+        table.add_row("9.", "Afficher les collaborateurs", "Affiche tous les collaborateurs")
+        table.add_row("10.", "Supprimer un client", "Affiche les clients du commercial avant le choix de l'id pour la suppression")
         table.add_row("Q.", "Se déconnecter", "Quitte votre session")
         console.print(table)
 
@@ -175,27 +178,24 @@ class MenuView:
         return int(Prompt.ask("[bold green]Entrez l'ID du collaborateur à modifier [/bold green]"))
 
     @staticmethod
-    def get_new_collaborator_info():
-        console.print("Entrez les nouvelles informations du collaborateur: ", style="bold magenta")
-        modify_collaborator = {"username": Prompt.ask("[bold green]"
-                                                      "Saisissez un nom utilisateur pour le collaborateur"
-                                                      "[/bold green]"),
-                               "password": Prompt.ask("[bold green]"
-                                                      "Saisissez un mot de passe pour le collaborateur"
-                                                      "[/bold green]", password=True),
-                               "first_name": Prompt.ask("[bold green]"
-                                                        "Saisissez le prénom du collaborateur"
-                                                        "[/bold green]"),
-                               "last_name": Prompt.ask("[bold green]"
-                                                       "Saisissez le nom du collaborateur: "
-                                                       "[/bold green]"),
-                               "role": Prompt.ask("[bold green]"
-                                                  "Saisissez le code du rôle du collaborateur ("
-                                                  "C pour Commercial, "
-                                                  "G pour Gestion, "
-                                                  "S pour Support"
-                                                  ")"
-                                                  "[/bold green]").upper()}
+    def get_new_collaborator_info(collaborator):
+        console.print("Entrez les nouvelles informations du collaborateur (laisser vide pour ne pas modifier) : ",
+                      style="bold magenta")
+
+        modify_collaborator = {
+            "username": Prompt.ask("[bold green]Saisissez un nom utilisateur pour le collaborateur[/bold green]",
+                                   default=collaborator.username),
+            "password": Prompt.ask("[bold green]Saisissez un mot de passe pour le collaborateur[/bold green]",
+                                   password=True),
+            "first_name": Prompt.ask("[bold green]Saisissez le prénom du collaborateur[/bold green]",
+                                     default=collaborator.first_name),
+            "last_name": Prompt.ask("[bold green]Saisissez le nom du collaborateur[/bold green]",
+                                    default=collaborator.last_name),
+            "role": Prompt.ask(
+                "[bold green]Saisissez le rôle du collaborateur (C pour Commercial, G pour Gestion, S pour Support)[/bold green]",
+                default=collaborator.role).upper()
+        }
+
         return modify_collaborator
 
     """Delete d'un collaborateur """

@@ -29,8 +29,8 @@ class ContractView:
             updated_at = contract.updated_at.strftime("%d-%m-%Y")
             client = (f"{contract.client.first_name} "
                       f"{contract.client.last_name}")
-            manager = (f"{contract.commercial_assignee.first_name} "
-                       f"{contract.commercial_assignee.last_name}")
+            manager = (f"{contract.commercial_assignee.first_name} {contract.commercial_assignee.last_name}"
+                       if contract.commercial_assignee else "Non assigné")
             table.add_row(
                 str(contract.id),
                 client,
@@ -150,10 +150,13 @@ class ContractView:
     @staticmethod
     def display_error(error_code, collaborator=None):
         messages = {
-            "NO_CONTRACTS_FOUND": f"Aucun contrat trouvé pour le commercial {collaborator.id},"
-                                  f" {collaborator.username}.",
+            "NO_CONTRACTS_FOUND": (
+                f"Aucun contrat trouvé pour le commercial {collaborator.id}, {collaborator.username}."
+                if collaborator else "Aucun contrat trouvé."
+            ),
             "NO_CONTRACTS_NON_SIGNED_FOUND": "Aucun contrat non signé trouvé.",
-            "NO_CONTRACTS_REMAINING_AMOUNT_FOUND": "Aucun contrat avec un montant restant trouvé."
+            "NO_CONTRACTS_REMAINING_AMOUNT_FOUND": "Aucun contrat avec un montant restant trouvé.",
+            "NO_CONTRACT_SELECTED": "Veuillez saisir un ID de contrat à modifier"
         }
         console.print(messages.get(error_code, "Erreur inconnue."), style="bold red")
 

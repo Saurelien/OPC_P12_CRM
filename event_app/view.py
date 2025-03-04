@@ -29,7 +29,8 @@ class EventView:
             event_date_start = event.event_date_start.strftime("%d-%m-%Y")
             event_date_end = event.event_date_end.strftime("%d-%m-%Y")
             contract = str(event.contract.id)
-            support_contact = f"{event.support_contact.id}, {event.support_contact.username}"
+            support_contact = f"{event.support_contact.id}, {event.support_contact.username}"\
+                if event.support_contact else " Non assigné"
             client = f"{event.client_id}"
             client_info = f"{event.client_info}"
             table.add_row(
@@ -183,10 +184,14 @@ class EventView:
     @staticmethod
     def get_event_id_to_modify(events):
         EventView.display_events(events)
-        event_id = Prompt.ask("[bold green]"
-                              "Saisissez l'ID de l'événement à modifier"
-                              "[/bold green]")
-        return event_id
+
+        while True:
+            event_id = Prompt.ask("[bold green]Saisissez l'ID de l'événement à modifier[/bold green]").strip()
+
+            if not event_id.isdigit():
+                EventView.display_error("EMPTY_FIELD")
+            else:
+                return int(event_id)
 
     @staticmethod
     def display_error(error_code):
@@ -198,6 +203,7 @@ class EventView:
             "INVALID_SUPPORT_CONTACT_ID": "Ce choix n'est pas valide ou collaborateur de support exigé. Veuillez "
                                           "réessayer.",
             "NO_EVENTS_FOUND": "Aucun événement trouvé pour ce gestionnaire/support.",
-            "INVALID_EVENT_ID": "ID d'événement invalide. Veuillez réessayer."
+            "INVALID_EVENT_ID": "ID d'événement invalide. Veuillez réessayer.",
+            "EMPTY_FIELD": "Erreur : Veuillez entrer un ID valide"
         }
         console.print(messages.get(error_code, "Erreur inconnue."), style="bold red")

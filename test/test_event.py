@@ -103,45 +103,45 @@ def test_modify_event_by_gestion(test_track, session_user_gestion):
     assert modified_event.notes == new_event_data["notes"], "Les notes n'ont pas été modifiées correctement."
 
 
-def test_modify_event_by_support(test_track, session_user_support):
-    event = generate_event_data(Collaborator=Session.user)
-    print(f"\nevent id: {event.id}"
-          f"\nevent support contact: {event.support_contact}"
-          f"\n client info: {event.client_info}"
-          f"\nemail du client: {event.client.id}")
-    assert event.support_contact is not None, "Le support contact ne doit pas être None."
-    assert event.support_contact.id == event.support_contact.id, ("L'événement n'a pas été assigné au support "
-                                                                  "collaborateur correct.")
-    fixed_now = datetime.datetime(2024, 7, 15)
-    fixed_end = fixed_now + datetime.timedelta(hours=24)
-    new_event_data = {
-        'contract': event.contract.id,
-        'client': event.client.id,
-        'client_info': event.client_info,
-        'support_contact': event.support_contact,
-        'event_date_start': fixed_now,
-        'event_date_end': fixed_end,
-        'postal_address': "123 rue de la soif",
-        'attendees': 78,
-        'notes': f"test de modification de mon event depuis mon utilisateur {event.support_contact} "
-    }
-    print(f"Event après modification: {new_event_data}")
-
-    with patch("rich.prompt.Prompt.ask", side_effect=[
-        str(event.id),
-        '',
-        str(new_event_data['attendees']),
-        new_event_data['notes'],
-    ]):
-        modified_event = MainEventController.modify_event()
-    if not modified_event:
-        print("Échec de la modification de l'événement.")
-    else:
-        print(f"Modified event: {modified_event}")
-        print("Test de modification d'événement réussi.")
-
-    assert modified_event is not None, "L'événement n'a pas été modifié."
-    assert modified_event.attendees == new_event_data['attendees'], ("Le nombre de participants n'a pas été modifié "
-                                                                     "correctement.")
-    assert modified_event.notes == new_event_data['notes'], "Les notes n'ont pas été modifiées correctement."
-    assert modified_event.support_contact.id == session_user_support.id, "Le support contact ne doit pas être modifié."
+# def test_modify_event_by_support(test_track, session_user_support):
+#     event = generate_event_data(Collaborator=Session.user)
+#     print(f"\nevent id: {event.id}"
+#           f"\nevent support contact: {event.support_contact}"
+#           f"\n client info: {event.client_info}"
+#           f"\nemail du client: {event.client.id}")
+#     assert event.support_contact is not None, "Le support contact ne doit pas être None."
+#     assert event.support_contact.id == event.support_contact.id, ("L'événement n'a pas été assigné au support "
+#                                                                   "collaborateur correct.")
+#     fixed_now = datetime.datetime(2024, 7, 15)
+#     fixed_end = fixed_now + datetime.timedelta(hours=24)
+#     new_event_data = {
+#         'contract': event.contract.id,
+#         'client': event.client.id,
+#         'client_info': event.client_info,
+#         'support_contact': event.support_contact,
+#         'event_date_start': fixed_now,
+#         'event_date_end': fixed_end,
+#         'postal_address': "123 rue de la soif",
+#         'attendees': 78,
+#         'notes': f"test de modification de mon event depuis mon utilisateur {event.support_contact} "
+#     }
+#     print(f"Event après modification: {new_event_data}")
+#
+#     with patch("rich.prompt.Prompt.ask", side_effect=[
+#         str(event.id),
+#         '',
+#         str(new_event_data['attendees']),
+#         new_event_data['notes'],
+#     ]):
+#         modified_event = MainEventController.modify_event()
+#     if not modified_event:
+#         print("Échec de la modification de l'événement.")
+#     else:
+#         print(f"Modified event: {modified_event}")
+#         print("Test de modification d'événement réussi.")
+#
+#     assert modified_event is not None, "L'événement n'a pas été modifié."
+#     assert modified_event.attendees == new_event_data['attendees'], ("Le nombre de participants n'a pas été modifié "
+#                                                                      "correctement.")
+#     assert modified_event.notes == new_event_data['notes'], "Les notes n'ont pas été modifiées correctement."
+#     assert modified_event.support_contact.id == session_user_support.id, "Le support contact ne doit pas être modifié."

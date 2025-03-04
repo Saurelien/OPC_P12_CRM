@@ -55,26 +55,5 @@ def test_modify_client(test_track, session_user_commercial):
           f"\nCommercial: {modified_client.commercial_assignee.username}"
           f"\nEmail du cleint modifier: {modified_client.email}")
     print("Client modifié et vérifié avec succès.")
-#
-#
-# @patch("services.utils.Session.user", mock_current_user_commercial())
-# def test_full_name_method(test_db):
-#     client = generate_client(collaborator=Collaborator.COMMERCIAL, first_name='John', last_name='Doe')
-#     client.save()
-#     assert client.full_name() == 'John Doe'
-#
-#
-# @patch("services.utils.Session.user", mock_current_user_commercial())
-# def test_str_method(test_db):
-#     client = generate_client(collaborator=Collaborator.COMMERCIAL, email='john.doe@example.com')
-#     client.save()
-#     assert str(client) == 'john.doe@example.com'
-#
-#
-# @patch("services.utils.Session.user", mock_current_user_commercial())
-# def test_get_full_phone_number_method(test_db):
-#     client = generate_client(collaborator=Collaborator.COMMERCIAL, phone_number='555-1234')
-#     client.save()
-#     assert client.get_full_phone_number() == '555-1234'
 
 

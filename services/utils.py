@@ -120,6 +120,7 @@ class AuthenticateService:
     def delete_token():
         try:
             os.remove('config/token.txt')
+            print('Vous avez quitté l\'application')
         except FileNotFoundError:
             pass
 
@@ -177,4 +178,3 @@ def get_model_fields(model):
     for field_name, field in model._meta.fields.items():
         fields.append((field_name, type(field).__name__))
     return fields
-

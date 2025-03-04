@@ -49,6 +49,7 @@ class MainContractController:
     @classmethod
     def modify_contract(cls):
         user = Session.get_current_user()
+        print(f"User récupéré : {user}")
 
         if user is None or (not Session.is_commercial() and not Session.is_gestion()):
             ContractView.display_error("UNAUTHORIZED_ACCESS")
@@ -63,18 +64,23 @@ class MainContractController:
             ContractView.display_error("NO_CONTRACTS_FOUND", user)
             return None
 
-        contract_id = ContractView.display_contract_selection(contracts)
-        if not contract_id:
-            ContractView.display_error("NO_CONTRACT_SELECTED")
-            return None
+        contract = None
+        while not contract:
+            contract_id = ContractView.display_contract_selection(contracts)
 
-        contract = Contract.get_or_none(Contract.id == contract_id)
-        if not contract:
-            ContractView.display_error("CONTRACT_NOT_FOUND")
-            return None
+            if not contract_id:
+                ContractView.display_error("NO_CONTRACT_SELECTED")
+                continue
+
+            contract = Contract.get_or_none(Contract.id == contract_id)
+
+            if not contract:
+                ContractView.display_error("CONTRACT_NOT_FOUND")
+                continue
 
         collaborators = Collaborator.select().where(Collaborator.role == Collaborator.COMMERCIAL)
         contract_data = ContractView.get_contract_modification_details(contract, collaborators)
+
         if not contract_data:
             ContractView.display_error("INVALID_CONTRACT_DATA")
             return None
@@ -88,14 +94,17 @@ class MainContractController:
         if "commercial_assignee" in contract_data:
             new_assignee_id = contract_data["commercial_assignee"]
             new_assignee = Collaborator.get_or_none(Collaborator.id == new_assignee_id)
-            if new_assignee:
+
+            if new_assignee and new_assignee.role == Collaborator.COMMERCIAL:
                 contract.commercial_assignee = new_assignee
+            else:
+                ContractView.display_error("INVALID_COMMERCIAL_ASSIGNEE")
+                return None
 
         contract.updated_at = datetime.now()
         contract.save()
 
         ContractView.display_contract_modification_summary(contract_data)
-        return contract
 
     @classmethod
     def display_contracts(cls):

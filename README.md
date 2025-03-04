@@ -2,14 +2,14 @@
 
 > Bienvenue dans le projet CRM ! Ce système de gestion de la relation client (CRM) 
 est développé en Python avec l'architecture MVC (Modèle-Vue-Contrôleur)
-et utilise le framework Peewee pour la gestion de la base de données PostgreSQL.
+Utilisant un ORM Peewee pour la relation des entités de la base de donnée.
 ##  | **Cloner le Dépôt** |
 
 >### Instructions pour cloner un dépôt depuis PyCharm
 
- - Pour les utilisateurs de la version PyCharm communautaire 2023.3.5, il est recommandé de passer sur l'ancienne version UI afin de trouver l'onglet "Git".
- - Dans le menu déroulant de Git, vous verrez une option "Clone". Renseignez le dépôt distant suivant: [Depot github](https://github.com/Saurelien/OPC_P12_CRM.git).
- - Cette action vous créera un nouveau projet du nom du dépôt distant.
+ - Dans le menu déroulant de Git, vous verrez une option "Clone".
+ - Renseignez le dépôt distant suivant: [Depot github](https://github.com/Saurelien/OPC_P12_CRM.git).
+ - Cette action vous créera un nouveau projet du nom du dépôt distant. Ainsi qu'un environnement virtuel prêt à l'usage
 
 ## | **Installation de PostgreSQL** |
 
@@ -34,7 +34,6 @@ et utilise le framework Peewee pour la gestion de la base de données PostgreSQL
 
 # | **Securité & divers** |
 >### La cle secrète:
-> - Par soucis de rendu aléatoire de la clé secrète lors du hashage du mot de passe et du token de login
-> - L'usage de l'outil en ligne: [generate-random](https://generate-random.org/encryption-key-generator?count=1&bytes=32&cipher=aes-256-cbc&string=&password=)
+> - L'usage de l'outil en ligne: [generate-random-secret-key](https://generate-random.org/encryption-key-generator?count=1&bytes=32&cipher=aes-256-cbc&string=&password=)
 > - Qui permet de rapidement obtenir une chaine de caractère prêt à l'usage :)
 > - Un sel combiné a argon 2 afin de hasher le mot de passe

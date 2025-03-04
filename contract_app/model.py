@@ -7,10 +7,10 @@ from client_app.model import Client
 class Contract(BaseModel):
     id = PrimaryKeyField(unique=True)
     client = ForeignKeyField(Client, backref='contracts', on_delete="CASCADE")
-    total_amount = IntegerField()
-    remaining_amount = IntegerField()
+    total_amount = IntegerField(constraints=[Check('total_amount >= 0')])
+    remaining_amount = IntegerField(constraints=[Check('total_amount >= 0')])
     is_signed = BooleanField(default=False)
-    commercial_assignee = ForeignKeyField(Collaborator, backref='contracts', null=True, on_delete="CASCADE")
+    commercial_assignee = ForeignKeyField(Collaborator, backref='contracts', null=True, on_delete="SET NULL")
 
     def mark_as_signed(self):
         self.is_signed = True

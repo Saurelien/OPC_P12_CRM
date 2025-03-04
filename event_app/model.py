@@ -11,7 +11,7 @@ class Event(BaseModel):
     contract = ForeignKeyField(Contract, backref='events', on_delete="CASCADE")
     client = ForeignKeyField(Client, backref='events', on_delete="CASCADE")
     client_info = TextField(null=True)
-    support_contact = ForeignKeyField(Collaborator)
+    support_contact = ForeignKeyField(Collaborator, null=True, on_delete="SET NULL")
     event_date_start = DateTimeField()
     event_date_end = DateTimeField()
     postal_address = CharField(max_length=200)

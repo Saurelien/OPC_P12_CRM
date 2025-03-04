@@ -1,4 +1,3 @@
-import logging
 from client_app.view import ClientView
 from services.utils import CollaboratorService, AuthenticateService, CollaboratorModificationService, Session
 from collaborator_app.model import Collaborator
@@ -101,6 +100,8 @@ class MainController:
                 MainEventController.create_event()
             elif choice == "9":
                 MainController.display_existing_collaborators()
+            elif choice == "10":
+                MainClientController.delete_client()
             elif choice.upper() == "Q":
                 AuthenticateService.delete_token()
                 MainController.run()
@@ -111,25 +112,18 @@ class MainController:
             MenuView.display_support_menu()
             choice = ClientView.get_choice()
             if choice == "1":
-                logging.info("display_existing_client called")
                 MainClientController.display_existing_client()
             elif choice == "2":
-                logging.info("display_existing_contract called")
                 MainContractController.display_existing_contract()
             elif choice == "3":
-                logging.info("display_existing_event called")
                 MainEventController.display_existing_event()
             elif choice == "4":
-                logging.info("display_existing_collaborators called")
                 MainController.display_existing_collaborators()
             elif choice == "5":
-                logging.info("list_events called")
                 MainEventController.list_events()
             elif choice == "6":
-                logging.info("modify_event called")
                 MainEventController.modify_event()
             elif choice.upper() == "Q":
-                logging.info("Se déconnecter called")
                 AuthenticateService.delete_token()
                 MainController.run()
 
@@ -152,16 +146,22 @@ class MainController:
             return
 
         collaborator_id = MenuView.modify_collaborator_by_id()
-        data = MenuView.get_new_collaborator_info()
         CollaboratorModificationService.validate_collaborator_modification_data(collaborator_id)
+
         collaborator = CollaboratorService.get_collaborator_by_id(collaborator_id)
-        collaborator.set_password(data['password'])
+
+        # Récupérer les nouvelles informations en conservant les anciennes si aucun champ n'est saisi
+        data = MenuView.get_new_collaborator_info(collaborator)
+
+        if data.get("password"):
+            collaborator.set_password(data["password"])
         collaborator.username = data["username"]
         collaborator.first_name = data["first_name"]
         collaborator.last_name = data["last_name"]
         collaborator.role = data["role"]
 
         collaborator.save()
+
         current_user = Session.get_current_user()
         if current_user.id == collaborator_id:
             Session.logout()
@@ -181,6 +181,9 @@ class MainController:
 
         confirmation = MenuView.confirm_action(collaborator.username)
         if confirmation.lower() == "y":
+            for contract in collaborator.contracts:
+                contract.commercial_assignee = None
+                contract.save()
             collaborator.delete_instance()
             MenuView.display_delete_success(collaborator.username)
         else:

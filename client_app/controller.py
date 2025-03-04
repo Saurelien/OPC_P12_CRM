@@ -3,6 +3,8 @@ import re
 from client_app.model import Client
 from client_app.view import ClientView
 from collaborator_app.model import Collaborator
+from contract_app.model import Contract
+from event_app.model import Event
 from services.utils import AuthenticateService, CollaboratorService, Session
 
 
@@ -34,6 +36,7 @@ class MainClientController:
             commercial_assignee=Session.get_current_user()
         )
         ClientView.display_client_table(new_client)
+        ClientView.display_success("SUCCESS_CREATE")
         return new_client
 
     @classmethod
@@ -92,3 +95,45 @@ class MainClientController:
                 break
 
         return email
+
+    @classmethod
+    def delete_client(cls):
+        if not Session.is_commercial():
+            return None
+
+        clients = Client.select().where(Client.commercial_assignee == Session.get_current_user())
+
+        if not clients.exists():
+            ClientView.display_error("CLIENT_NOT_EXIST")
+            return None
+
+        ClientView.display_clients_table(clients)
+        client_id = ClientView.prompt_client_id(clients)
+
+        if not client_id:
+            ClientView.display_error("NO_CLIENT_SELECTED")
+            return None
+
+        client = Client.get_or_none(Client.id == client_id)
+
+        if not client:
+            ClientView.display_error("NO_CLIENT_FOUND")
+            return None
+
+        contracts = Contract.select().where(Contract.client == client)
+
+        if contracts.exists():
+            signed_contracts = contracts.where(Contract.is_signed == True)
+            if signed_contracts.exists():
+                ClientView.display_error("CLIENT_HAS_SIGNED_CONTRACT")
+                return None
+            else:
+                Event.delete().where(Event.contract << contracts).execute()
+                Contract.delete().where(Contract.client == client).execute()
+
+        confirm = ClientView.confirm_action("Êtes-vous sûr de vouloir supprimer ce client ? (O/N)")
+        if confirm.lower() == "o":
+            client.delete_instance()
+            ClientView.display_success("SUCCESS_DELETE")
+        else:
+            ClientView.display_error("ACTION_CANCELED")
