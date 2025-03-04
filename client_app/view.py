@@ -99,11 +99,11 @@ class ClientView:
         message = messages.get(success_code, "Succès")
 
         if success_code == "SUCCESS_CREATE":
-            console.print(f"✅[bold green] {message}[/bold green]")
+            console.print(f"✅ [bold green] {message}[/bold green]")
         elif success_code == "SUCCESS_MODIFY":
-            console.print(f"🔄[bold blue] {message}[/bold blue]")
+            console.print(f"🔄 [bold blue] {message}[/bold blue]")
         elif success_code == "SUCCESS_DELETE":
-            console.print(f"✅[bold green] {message}[/bold green]")
+            console.print(f"✅ [bold green] {message}[/bold green]")
 
     @staticmethod
     def prompt_modified_client_data():
@@ -140,7 +140,7 @@ class ClientView:
             ).strip()
 
             if client_id in valid_ids:
-                return int(client_id)  # ✅ Retourne l'ID valide
+                return int(client_id)
 
             console.print("[bold red]ID invalide ou absent.[/bold red]")
 

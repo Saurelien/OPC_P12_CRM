@@ -150,7 +150,7 @@ class MainController:
 
         collaborator = CollaboratorService.get_collaborator_by_id(collaborator_id)
 
-        # Récupérer les nouvelles informations en conservant les anciennes si aucun champ n'est saisi
+        # test de récupérer les nouvelles informations en conservant les anciennes si aucun champ n'est saisi
         data = MenuView.get_new_collaborator_info(collaborator)
 
         if data.get("password"):

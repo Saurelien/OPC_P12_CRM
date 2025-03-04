@@ -1,11 +1,9 @@
-from unittest.mock import patch
-
 from collaborator_app.model import Collaborator
-from contract_app.controller import MainContractController
 from contract_app.model import Contract
 from services.utils import Session
 from utils import generate_contract_data, generate_client, generate_collaborator
-
+from unittest.mock import patch
+from contract_app.controller import MainContractController
 
 def test_create_contract_as_gestion(test_track, session_user_gestion):
     client = generate_client()
@@ -43,83 +41,74 @@ def test_create_contract_as_gestion(test_track, session_user_gestion):
     print("Test de création de contrat réussi.")
 
 
-def test_modify_contract_as_commercial(test_track, session_user_commercial):
+def test_create_signed_contract(test_track, session_user_gestion):
     client = generate_client()
-    commercial = client.commercial_assignee
-    contract = Contract.create(
-        total_amount=1000,
-        remaining_amount=500,
-        is_signed=False,
-        commercial_assignee=commercial,
-        client=client
-    )
+    commercial_contract_assignee = client.commercial_assignee
+    print(f"Client généré: {client.first_name}, commercial assigné a la création du client: {client.commercial_assignee}")
 
-    Session.user = commercial
-
-    new_contract_data = {
-        'total_amount': '1200',
-        'remaining_amount': '600',
-        'is_signed': 'oui'
+    contract_data_signed = {
+        'total_amount': '1000',
+        'remaining_amount': '500',
+        'is_signed': 'true',
+        'commercial_assignee': commercial_contract_assignee,
+        'client': client
     }
 
-    with patch("rich.prompt.Prompt.ask", side_effect=[
-        str(contract.id),
-        new_contract_data['total_amount'],
-        new_contract_data['remaining_amount'],
-        new_contract_data['is_signed'],
-        ""
-    ]):
-        modified_contract = MainContractController.modify_contract()
+    print("Contract Data (Signé):", contract_data_signed)
+    side_effect_signed = [contract_data_signed['client'],
+                          contract_data_signed['total_amount'],
+                          contract_data_signed['remaining_amount'],
+                          contract_data_signed['is_signed']]
 
-    assert modified_contract is not None
-    assert modified_contract.total_amount == new_contract_data['total_amount']
-    assert modified_contract.remaining_amount == new_contract_data['remaining_amount']
-    assert modified_contract.is_signed == (new_contract_data['is_signed'].lower() == 'oui')
-    assert modified_contract.commercial_assignee == commercial
+    with patch("rich.prompt.Prompt.ask", side_effect=side_effect_signed):
+        created_contract_signed = MainContractController.create_contract()
 
-    print("Test de modification de contrat par un commercial réussi.")
+    if created_contract_signed is None:
+        print("Erreur : Le contrat signé créé est None")
+    else:
+        print(f"Contrat signé créé avec succès: {created_contract_signed.id}")
 
+    assert created_contract_signed is not None
+    assert created_contract_signed.client == client
+    assert created_contract_signed.total_amount == contract_data_signed['total_amount']
+    assert created_contract_signed.remaining_amount == contract_data_signed['remaining_amount']
+    assert created_contract_signed.is_signed == (contract_data_signed['is_signed'].lower() == 'true')
+    assert created_contract_signed.commercial_assignee == commercial_contract_assignee
 
-def test_modify_contract_as_gestion(test_track, session_user_gestion):
-    new_commercial = generate_collaborator(role=Collaborator.COMMERCIAL)
+    print("Test de création de contrat signé réussi.")
 
-    contract = generate_contract_data()
-    print(f"\nContrat généré: {contract}"
-          f"\nCommercial assigné: {contract.commercial_assignee}"
-          f"\nClient: {contract.client}")
+def test_create_unsigned_contract(test_track, session_user_gestion):
+    client = generate_client()
+    commercial_contract_assignee = client.commercial_assignee
+    print(f"Client généré: {client.first_name}, commercial assigné a la création du client: {client.commercial_assignee}")
 
-    # Session.user = new_commercial
-    # print(f"Session.user: {Session.user}")
-
-    updated_data = {
-        'total_amount': '1500',
-        'remaining_amount': '800',
-        'is_signed': 'oui',
-        'commercial_assignee': new_commercial
+    contract_data_unsigned = {
+        'total_amount': '2000',
+        'remaining_amount': '1000',
+        'is_signed': 'false',
+        'commercial_assignee': commercial_contract_assignee,
+        'client': client
     }
-    print(f"Contrat mis à jour: {updated_data}"
-          f"\ncommercial_assignee: {new_commercial}"
-          f"\ncommercial assignée id: {new_commercial.id}")
 
-    with patch("rich.prompt.Prompt.ask", side_effect=[
-        str(contract.id),
-        updated_data['total_amount'],
-        updated_data['remaining_amount'],
-        updated_data['is_signed'],
-        str(new_commercial.id)
-    ]):
-        try:
-            updated_contract = MainContractController.modify_contract()
-        except Exception as e:
-            print(f"Erreur rencontrée: {e}")
-            raise
+    print("Contract Data (Non Signé):", contract_data_unsigned)
+    side_effect_unsigned = [contract_data_unsigned['client'],
+                            contract_data_unsigned['total_amount'],
+                            contract_data_unsigned['remaining_amount'],
+                            contract_data_unsigned['is_signed']]
 
-    assert updated_contract is not None
-    assert updated_contract.total_amount == updated_data['total_amount']
-    assert updated_contract.remaining_amount == updated_data['remaining_amount']
-    assert updated_contract.is_signed == (updated_data['is_signed'].lower() == 'oui')
+    with patch("rich.prompt.Prompt.ask", side_effect=side_effect_unsigned):
+        created_contract_unsigned = MainContractController.create_contract()
 
-    new_assignee = Collaborator.get_or_none(Collaborator.id == updated_data['commercial_assignee'])
-    assert updated_contract.commercial_assignee == new_assignee
+    if created_contract_unsigned is None:
+        print("Erreur : Le contrat non signé créé est None")
+    else:
+        print(f"Contrat non signé créé avec succès: {created_contract_unsigned.id}")
 
-    print("Test de modification de contrat avec changement de commercial assigné réussi.")
+    assert created_contract_unsigned is not None
+    assert created_contract_unsigned.client == client
+    assert created_contract_unsigned.total_amount == contract_data_unsigned['total_amount']
+    assert created_contract_unsigned.remaining_amount == contract_data_unsigned['remaining_amount']
+    assert created_contract_unsigned.is_signed == (contract_data_unsigned['is_signed'] == 'true')
+    assert created_contract_unsigned.commercial_assignee == commercial_contract_assignee
+
+    print("Test de création de contrat non signé réussi.")

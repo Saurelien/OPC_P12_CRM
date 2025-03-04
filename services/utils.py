@@ -157,8 +157,6 @@ class CollaboratorModificationService:
         if not CollaboratorModificationService.is_valid_collaborator_id(collaborator_id):
             raise ValueError("ID Collaborateur invalide")
 
-        # if not CollaboratorModificationService.validate_new_collaborator_info(modified_collaborator):
-        #     raise ValueError("Informations de la modification du collaborateur invalide")
 
     @staticmethod
     def is_valid_collaborator_id(collaborator_id):
