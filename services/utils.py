@@ -1,4 +1,6 @@
 import os
+from datetime import datetime, timedelta, timezone
+
 from collaborator_app.model import Collaborator
 import jwt
 from config.config import SECRET_KEY
@@ -37,7 +39,7 @@ class Session:
         if token:
             user_id = AuthenticateService.decode_token(token)
             user = CollaboratorService.get_collaborator_by_id(user_id)
-            if user:
+            if user and not AuthenticateService.is_token_expired(token):  # Vérification de l'expiration ici
                 cls.user = user
                 return True
         return False
@@ -91,8 +93,28 @@ class CollaboratorService:
 
 class AuthenticateService:
     @staticmethod
-    def generate_token(user_id):
-        return jwt.encode({'user_id': user_id}, SECRET_KEY, algorithm='HS256')
+    def generate_token(user_id, expiration_delta_minutes=2):
+        expiration_time = datetime.now(timezone.utc) + timedelta(minutes=expiration_delta_minutes)
+        expiration_timestamp = expiration_time.timestamp()
+        payload = {
+            'user_id': user_id,
+            'exp': expiration_timestamp
+        }
+        return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+    @staticmethod
+    def is_token_expired(token):
+        try:
+            decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            expiration_timestamp = decoded_token.get('exp')
+            if expiration_timestamp:
+                expiration_time = datetime.fromtimestamp(expiration_timestamp, tz=timezone.utc)
+                return datetime.now(timezone.utc) > expiration_time
+            return False
+        except jwt.ExpiredSignatureError:
+            return True
+        except jwt.InvalidTokenError:
+            return False
 
     @staticmethod
     def store_token(token):
@@ -133,7 +155,6 @@ class CollaboratorValidator:
 
     @staticmethod
     def validate_role(role_code):
-        print(role_code)
         return role_code in ['C', 'G', 'S']
 
     @staticmethod
@@ -147,7 +168,6 @@ class CollaboratorValidator:
         if not CollaboratorValidator.validate_role(collaborator_data.get("role")):
             console.print("Code de rôle invalide.", style="bold red")
             is_valid = False
-        print(is_valid)
         return is_valid
 
 

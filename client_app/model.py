@@ -9,7 +9,7 @@ class Client(BaseModel):
     last_name = CharField(max_length=50)
     email = CharField()
     phone_number = CharField()
-    commercial_assignee = ForeignKeyField(Collaborator, backref='clients', on_delete="CASCADE")
+    commercial_assignee = ForeignKeyField(Collaborator, backref='clients', null=True, on_delete="SET NULL")
 
     def save(self, *args, **kwargs):
         return super().save(*args, **kwargs)

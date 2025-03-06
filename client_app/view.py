@@ -19,6 +19,7 @@ class ClientView:
                       caption_justify="center",
                       header_style="bold magenta",
                       border_style="bold yellow")
+
         table.add_column("ID", style="cyan", justify="center")
         table.add_column("First Name", style="cyan", justify="center")
         table.add_column("Last Name", style="cyan", justify="center")
@@ -31,10 +32,15 @@ class ClientView:
         for client in clients:
             created_at = client.created_at.strftime("%d-%m-%Y")
             updated_at = client.updated_at.strftime("%d-%m-%Y")
-            commercial_assignee = (f"Nom du commercial: {client.commercial_assignee.username} | "
-                                   f"Prenom du commercial: {client.commercial_assignee.last_name} | "
-                                   f"ID du collaborateur: {client.commercial_assignee.id} | "
-                                   f"Role du collaborateur: {client.commercial_assignee.role}")
+
+            if client.commercial_assignee:
+                commercial_assignee = (f"Nom du commercial: {client.commercial_assignee.username} | "
+                                       f"Prénom du commercial: {client.commercial_assignee.last_name} | "
+                                       f"ID du collaborateur: {client.commercial_assignee.id} | "
+                                       f"Rôle du collaborateur: {client.commercial_assignee.role}")
+            else:
+                commercial_assignee = "Aucun commercial assigné"
+
             table.add_row(
                 str(client.id),
                 client.first_name,

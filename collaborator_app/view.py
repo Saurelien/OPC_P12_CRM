@@ -20,6 +20,10 @@ class MenuView:
         console.print("Fermeture du programme.", style="bold blue")
 
     @staticmethod
+    def display_error(message):
+        console.print(f"[bold red]Erreur : {message}[/bold red]")
+
+    @staticmethod
     def display_menu():
         table = Table(show_header=True, header_style="bold magenta", title_justify="center", border_style="bold yellow")
         table.add_column("Choix", justify="center", style="bold cyan")

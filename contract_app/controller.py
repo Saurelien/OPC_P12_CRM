@@ -49,7 +49,7 @@ class MainContractController:
     @classmethod
     def modify_contract(cls):
         user = Session.get_current_user()
-        print(f"User récupéré : {user}")
+        # print(f"User récupéré : {user}")
 
         if user is None or (not Session.is_commercial() and not Session.is_gestion()):
             ContractView.display_error("UNAUTHORIZED_ACCESS")
